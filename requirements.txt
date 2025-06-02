@@ -1,0 +1,7 @@
+# Most core dependencies (PyTorch, TensorRT, OpenCV) are expected
+# to be provided by the Ultralytics Jetson Docker image.
+# This file lists direct Python dependencies for our script.
+
+ultralytics
+# opencv-python is usually in the base image, but good to note.
+# numpy is usually in the base image.
