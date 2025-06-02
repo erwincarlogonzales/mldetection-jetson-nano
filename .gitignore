@@ -43,16 +43,15 @@ MANIFEST
 .DS_Store
 Thumbs.db
 
-# Model files - user should provide their own
-# *.pt
-# *.pth
-# *.engine
-# *.onnx
-# *.weights
+# Model files - user should provide their own from model_files/ as per README
+# model_files/*.pt
+# model_files/*.pth
+# model_files/*.engine
+# model_files/*.onnx # Keep if you want to ignore all ONNX not specifically named `your_model.onnx`
+# model_files/*.weights
 
 # Dataset files - user should provide their own
-model_files/hardware_dataset/
-model_files/*.yaml # If they are dataset specific, not general config
+# model_files/calibration_dataset/ # Example
 # Add other specific dataset paths if necessary
 
 # Jupyter Notebook checkpoints
