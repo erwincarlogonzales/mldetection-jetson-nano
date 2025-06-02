@@ -44,11 +44,11 @@ MANIFEST
 Thumbs.db
 
 # Model files - user should provide their own
-*.pt
-*.pth
-*.engine
-*.onnx
-*.weights
+# *.pt
+# *.pth
+# *.engine
+# *.onnx
+# *.weights
 
 # Dataset files - user should provide their own
 model_files/hardware_dataset/
