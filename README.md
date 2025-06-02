@@ -53,9 +53,9 @@ This is like preparing your summoning jutsu – follow each step carefully!
 **Step 1: Prepare Your Model and Data Files**
 
 1.  Navigate to the `model_files/` directory in this repository on your Jetson Nano.
-2.  **Place your trained YOLO `.pt` model file** here. For example, if your model is `my_yolov8_model.pt`, place it in `model_files/my_yolov8_model.pt`.
+2.  **Place your trained YOLO `.pt` model file** here. For example, if your model is `best.pt`, place it in `model_files/best.pt`.
 3.  **If you are planning to export to INT8 (recommended for YOLOv8 on Nano for performance):**
-    * Place your `data.yaml` file (the one that defines your dataset, classes, and paths to images, used during training/calibration) in `model_files/your_data.yaml`.
+    * Place your `data.yaml` file (the one that defines your dataset, classes, and paths to images, used during training/calibration) in `model_files/data.yaml`.
     * Place your calibration image dataset (e.g., a `dataset/` folder containing `images/` and `labels/` subdirectories, as referenced by your `data.yaml`) inside the `model_files/` directory. Ensure the paths within your `data.yaml` are relative to its location or update them to be correct *when accessed from inside the Docker container* (e.g., if `data.yaml` expects `../dataset/images`, make sure that structure exists relative to where `data.yaml` will be in the container, like `/app/model_files/`).
         * **Example structure inside `model_files/` for INT8:**
             ```
