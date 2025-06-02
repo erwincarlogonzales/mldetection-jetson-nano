@@ -13,7 +13,7 @@ MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', 'model_files', MODEL_
 
 WEBCAM_INDEX = 0
 FRAME_WIDTH = 640
-FRAME_HEIGHT = 480 # You can adjust this; 640x640 is also common for YOLO inputs
+FRAME_HEIGHT = 640 # You can adjust this; 640x640 is also common for YOLO inputs
 CONFIDENCE_THRESHOLD = 0.5 # Minimum confidence to consider a detection
 
 # --- Classes to Count (MUST EXACTLY MATCH YOUR MODEL'S CLASS NAMES) ---
