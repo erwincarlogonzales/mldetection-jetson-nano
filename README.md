@@ -70,7 +70,7 @@ This is like preparing your summoning jutsu – follow each step carefully!
                     ├── train/
                     └── valid/
             ```
-            And `my_dataset_config.yaml` might have paths like:
+            And `data.yaml` might have paths like:
             ```yaml
             path: ../hardware_dataset  # Relative path to the dataset root from data.yaml
             train: images/train
