@@ -149,7 +149,7 @@ def main():
         
         cv2.putText(
             annotated_frame,
-            f"Total Monitored: {total_counted_objects}",
+            f"Total: {total_counted_objects}",
             (10, y_offset),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.7, (255, 0, 255), 2
