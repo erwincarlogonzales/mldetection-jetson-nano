@@ -141,3 +141,64 @@ After the first-time setup:
     * The class names in `CLASSES_TO_COUNT` in `src/app.py` *must exactly match* the names your ONNX model was trained with (these are usually accessible via `model.names` after the model loads; the script will print these for verification).
 
 ---
+
+## Testing on Your PC (using Poetry)
+
+You can test the `app.py` script on your local PC (Windows/Linux/macOS) to verify its functionality before deploying to the Jetson Nano. This setup uses Poetry for managing the Python environment and dependencies. Inference will typically run on your PC's CPU if you don't have an NVIDIA GPU with ONNX Runtime GPU support configured.
+
+**Prerequisites for PC Testing:**
+
+1.  **Python installed** (version compatible with `requires-python` in `pyproject.toml`, e.g., >=3.8).
+2.  **Poetry installed** (see [Poetry's official documentation](https://python-poetry.org/docs/#installation)).
+3.  **Git installed** (for cloning the repository).
+4.  **A connected webcam.**
+
+**Steps to Run `app.py` on Your PC:**
+
+1.  **Clone the Repository (if you haven't already):**
+    ```bash
+    git clone <your_github_repo_url>
+    cd jetson_yolo_object_counter
+    ```
+
+2.  **Initialize Poetry and Install Dependencies:**
+    Navigate to the project root directory (`jetson_yolo_object_counter`). If this is your first time setting up with Poetry for this project:
+    ```bash
+    # This installs dependencies from pyproject.toml and poetry.lock
+    poetry install
+    ```
+    *(If you've been adding dependencies one-by-one with `poetry add ...` and have a `poetry.lock` file, `poetry install` will ensure everything is synced).*
+
+3.  **Activate the Poetry Virtual Environment:**
+    ```bash
+    poetry shell
+    ```
+    Your terminal prompt should change, indicating the virtual environment is active.
+
+4.  **Prepare Your ONNX Model:**
+    * Place your `.onnx` model file (e.g., `best_int8_dynamic.onnx`) into the `model_files/` directory.
+    * Open `src/app.py` and ensure the `MODEL_FILENAME` variable at the top correctly matches the name of your ONNX file.
+    * Also, verify that the `CLASSES_TO_COUNT` list in `src/app.py` contains the class names relevant to your model.
+
+5.  **Navigate to the Source Directory:**
+    ```bash
+    # If you ran 'poetry shell' from the project root, you're likely still there.
+    # If so, navigate into src:
+    cd src
+    ```
+
+6.  **Run the Script:**
+    ```bash
+    python app.py
+    ```
+    *(Since the Poetry shell is active, you can use `python app.py` directly. Alternatively, from the project root, you could use `poetry run python src/app.py`)*
+
+7.  **View Output:**
+    * A window should appear showing your webcam feed.
+    * Detected objects (from your `CLASSES_TO_COUNT` list) should have bounding boxes and labels.
+    * Counts for these classes and the inference speed (in milliseconds) will be displayed on the frame.
+    * Check your terminal for any print messages from the script (model loading status, class names, camera resolution).
+
+8.  **To Stop:** Press 'q' in the OpenCV window. To deactivate the Poetry shell later, you can type `exit`.
+
+This setup allows you to debug and refine the core application logic on your PC before moving to the Jetson Nano Docker deployment.
