@@ -182,7 +182,7 @@ You can test the `app.py` script on your local PC (Windows/Linux/macOS) to verif
 
 5.  **Navigate to the Source Directory:**
     ```bash
-    # If you ran 'poetry shell' from the project root, you're likely still there.
+    # If you ran 'env activate' from the project root, you're likely still there.
     # If so, navigate into src:
     cd src
     ```
