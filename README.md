@@ -171,7 +171,7 @@ You can test the `app.py` script on your local PC (Windows/Linux/macOS) to verif
 
 3.  **Activate the Poetry Virtual Environment:**
     ```bash
-    poetry shell
+    poetry env activate
     ```
     Your terminal prompt should change, indicating the virtual environment is active.
 
