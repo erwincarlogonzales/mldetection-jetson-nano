@@ -3,7 +3,7 @@ import supervision as sv
 from ultralytics import YOLO
 import os
 from collections import defaultdict
-import numpy as np # Added for creating the mask
+import numpy as np
 
 # --- Configuration ---
 MODEL_FILENAME = "best_int8_dynamic.onnx"  # Your ONNX model's filename
@@ -61,7 +61,6 @@ def main():
     print(f"Camera opened successfully! Actual Resolution: {actual_frame_width}x{actual_frame_height}")
 
     box_annotator = sv.BoxAnnotator(thickness=2)
-    # For label_annotator, we will generate labels only for filtered detections
     label_annotator = sv.LabelAnnotator(text_thickness=1, text_scale=0.5, text_padding=3) 
 
     print("Starting detection... Press 'q' in the OpenCV window to quit.")
@@ -72,18 +71,14 @@ def main():
             print("Failed to grab frame from webcam. Exiting...")
             break
 
-        # Perform inference
         results = model(frame, verbose=False, conf=CONFIDENCE_THRESHOLD)
-        # results is a list, get the first Results object
         result = results[0] 
         detections = sv.Detections.from_ultralytics(result)
 
-        # NEW: Filter detections to only include those in CLASSES_TO_COUNT
         filtered_detections_list = []
         if len(detections) > 0 and detections.class_id is not None:
             for i in range(len(detections)):
                 class_id = detections.class_id[i]
-                # Get class name using model.names
                 class_name = ""
                 if isinstance(model.names, dict) and class_id in model.names:
                     class_name = model.names[class_id]
@@ -93,77 +88,77 @@ def main():
                 if class_name in CLASSES_TO_COUNT:
                     filtered_detections_list.append(detections[i])
         
-        # Create a new Detections object from the filtered list
         if filtered_detections_list:
-            # Need to collect all attributes from the list of Detections objects
             xyxy = np.array([d.xyxy[0] for d in filtered_detections_list])
             confidence = np.array([d.confidence[0] for d in filtered_detections_list])
             class_id = np.array([d.class_id[0] for d in filtered_detections_list])
-            # Recreate a supervision.Detections object for the filtered items
-            # Note: tracker_id and data might be missing if not used/set previously
             filtered_sv_detections = sv.Detections(
                 xyxy=xyxy,
                 confidence=confidence,
                 class_id=class_id
             )
         else:
-            # Create an empty Detections object if nothing matched
             filtered_sv_detections = sv.Detections.empty()
 
-
-        # Count objects per class from the filtered detections
         object_counts_per_class = defaultdict(int)
         total_counted_objects = 0
         if len(filtered_sv_detections) > 0:
             for i in range(len(filtered_sv_detections)):
                 class_id = filtered_sv_detections.class_id[i]
-                class_name = model.names[class_id] # Should be safe now
+                class_name = model.names[class_id] 
                 object_counts_per_class[class_name] += 1
                 total_counted_objects +=1
         
-
         annotated_frame = frame.copy()
-        # NEW: Annotate only the filtered detections
         if len(filtered_sv_detections) > 0:
             annotated_frame = box_annotator.annotate(scene=annotated_frame, detections=filtered_sv_detections)
-            
-            # NEW: Create labels only for filtered detections
             labels = [
                 f"{model.names[class_id]} {confidence:.2f}"
                 for class_id, confidence in zip(filtered_sv_detections.class_id, filtered_sv_detections.confidence)
             ]
             annotated_frame = label_annotator.annotate(scene=annotated_frame, detections=filtered_sv_detections, labels=labels)
         
-        # Display specific class counts
+        # --- MODIFIED SECTION FOR DISPLAYING COUNTS ---
         y_offset = 30
-        for class_name_to_display in CLASSES_TO_COUNT: # Iterate through the desired list to maintain order
-            count = object_counts_per_class.get(class_name_to_display, 0) # Get count, default to 0
+        # Iterate through the items in object_counts_per_class.
+        # This dictionary now only contains classes from CLASSES_TO_COUNT that were detected in this frame.
+        if object_counts_per_class: # Check if the dictionary is not empty
+            for class_name, count in object_counts_per_class.items():
+                cv2.putText(
+                    annotated_frame,
+                    f"{class_name}: {count}",
+                    (10, y_offset),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.6, (0, 255, 255), 2 # Cyan color
+                )
+                y_offset += 25
+        else: # If no objects from CLASSES_TO_COUNT were detected, maybe print a "No monitored objects" message
             cv2.putText(
                 annotated_frame,
-                f"{class_name_to_display}: {count}",
+                "No monitored objects detected",
                 (10, y_offset),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.6, (0, 255, 255), 2
+                0.6, (128, 128, 128), 2 # Gray color
             )
-            y_offset += 25
-        
+            y_offset +=25
+
+
         cv2.putText(
             annotated_frame,
-            f"Total: {total_counted_objects}",
+            f"Total: {total_counted_objects}", # This already reflects only counted items
             (10, y_offset),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.7, (255, 0, 255), 2
+            0.7, (255, 0, 255), 2 # Magenta
         )
+        # --- END OF MODIFIED SECTION ---
 
-        # NEW: Display inference speed
-        # The 'speed' attribute is a dict: {'preprocess': ms, 'inference': ms, 'postprocess': ms}
-        inference_time_ms = result.speed.get('inference', 0.0) # Get inference time, default to 0 if not found
+        inference_time_ms = result.speed.get('inference', 0.0)
         cv2.putText(
             annotated_frame,
             f"Inference: {inference_time_ms:.2f} ms",
-            (10, y_offset + 30), # Position below the counts
+            (10, y_offset + 30), 
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.6, (255, 255, 0), 2 # Another color
+            0.6, (255, 255, 0), 2
         )
 
         cv2.imshow("ONNX Object Detection - Jetson Nano (PC Test)", annotated_frame)

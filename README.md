@@ -144,6 +144,8 @@ After the first-time setup:
 
 ## Testing on Your PC (using Poetry)
 
+### Running this shit takes minutes to load so be patient!
+
 You can test the `app.py` script on your local PC (Windows/Linux/macOS) to verify its functionality before deploying to the Jetson Nano. This setup uses Poetry for managing the Python environment and dependencies. Inference will typically run on your PC's CPU if you don't have an NVIDIA GPU with ONNX Runtime GPU support configured.
 
 **Prerequisites for PC Testing:**
