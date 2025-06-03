@@ -5,7 +5,7 @@ import os
 from collections import defaultdict
 
 # --- Configuration ---
-MODEL_FILENAME = "yolov11n.onnx"  # <<< IMPORTANT: Change this to your ONNX model's filename
+MODEL_FILENAME = "best_int8_dynamic.onnx"  # <<< IMPORTANT: Change this to your ONNX model's filename
                                   # This file should be in the 'model_files/' directory.
 
 # Path assumes this script is in 'src/' and models are in '../model_files/'
